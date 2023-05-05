@@ -30,6 +30,7 @@ public class UseInterrupts
         @Override
         public void run() {
             System.out.println(this.getName() + " is Active.");
+            long start = System.currentTimeMillis();
 
             while (this.sleepCounter > 0)
             {
@@ -43,7 +44,10 @@ public class UseInterrupts
                     System.out.println("Number of sleeps remaining: " + this.sleepCounter);
                 }
             }
-
+            long end = System.currentTimeMillis();
+            if (end - start >= 3000) {
+                this.stop();
+            }
         }
     }
 
@@ -65,11 +69,14 @@ public class UseInterrupts
         @Override
         public void run() {
             System.out.println(this.getName() + " is Active.");
+            long start = System.currentTimeMillis();
 
             for (int i = 0; i < 10; i += 3)
             {
                 i -= this.value;
-
+                while (System.currentTimeMillis() - start >= 3000) {
+                    this.stop();
+                }
             }
         }
     }
@@ -82,10 +89,18 @@ public class UseInterrupts
         SleepThread sleepThread = new SleepThread(5);
         sleepThread.start();
 
+        if (sleepThread.isInterrupted()) {
+            System.out.println("sleep thread is interrupted");
+        }
+
         // TODO  Check if this thread runs for longer than 3 seconds (if it does, interrupt it)
 
         LoopThread loopThread = new LoopThread(3);
         loopThread.start();
+
+        if (!loopThread.isAlive()) {
+            System.out.println("loop thread is interrupted");
+        }
 
         // TODO  Check if this thread runs for longer than 3 seconds (if it does, interrupt it)
 
